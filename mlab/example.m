@@ -1,9 +1,10 @@
 %% Example of use: 2ZeC
-close all
+clear, close all
+addpath("utils\");
 
 % User-defined parameters first
 ir_file = "h_bp_0006.wav";
-data_dir = ".\impulses\";
+data_dir = ".\data\";
 algorithm_fcn_name = 'twoZeC';
 metric_names = ["MSE" "SDR"];
 hyperparam_names = ["p" "spec_tol" "SNR" "f_lims"];
@@ -14,10 +15,6 @@ spec_tol = 1e-1;
 SNRs = [40 20 10];
 f_lims = [0 20e3];
 hyperparams = {p, spec_tol, SNR, f_lims};
-
-% Add path to functions
-addpath("utils\");
-addpath("classes\");
 
 % Retrieve impulse response from IR's directory
 data_path = strcat(data_dir,ir_file);
