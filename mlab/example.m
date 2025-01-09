@@ -3,7 +3,8 @@ clear, close all
 addpath("utils\");
 
 % User-defined parameters first
-ir_file = "h_bp_0006.wav";
+ir_file = "h_rir_0001.wav";
+test_signal_file = "test_signal.wav";
 data_dir = ".\data\";
 algorithm_fcn_name = 'twoZeC';
 metric_names = ["MSE" "SDR"];
@@ -14,11 +15,14 @@ p = 2;
 spec_tol = 1e-1;
 SNRs = [40 20 10];
 f_lims = [0 20e3];
-hyperparams = {p, spec_tol, SNR, f_lims};
 
 % Retrieve impulse response from IR's directory
-data_path = strcat(data_dir,ir_file);
-[h_ref,fs] = audioread(data_path);
+ir_path = strcat(data_dir,ir_file);
+[h_ref,fs] = audioread(ir_path);
+
+% Retrieve test signal (MLS)
+test_signal_path = strcat(data_dir,test_signal_file);
+[test_signal, fs2] = audioread(test_signal_path);
 
 % Initialize figure
 nplots = length(SNRs);
@@ -28,6 +32,9 @@ figure(2), clf
 for i = 1:nplots
     % Get SNR
     SNR = SNRs(i);
+
+    % Set hyperparams vector (for twoZecLogger)
+    hyperparams = {p, spec_tol, SNR, f_lims};
 
     % Add noise (if any)
     h_ref = add_gaussian_noise(h_ref,SNR);
@@ -48,7 +55,6 @@ for i = 1:nplots
     if i == 1
         title("Impulse response","Interpreter","latex")
     end
-    
     subplot(nplots,2,2*(i-1)+2)
     NDFT = length(h_ref);
     H_ref = 20*log10(abs(fft(h_ref,NDFT)));
@@ -56,7 +62,6 @@ for i = 1:nplots
     f = linspace(0,fs,NDFT)*1e-3;
     h1 = plot(f,H_ref,'DisplayName','$H(e^{j\omega})$'); hold on
     h2 = plot(f,H_crop,'DisplayName','$\hat{H}(e^{j\omega})$');
-    %xline(f_lims(1),'r'), xline(f_lims(2),'r');
     grid on, xlim([0,fs/2*1e-3]);
     ylabel("dB","Interpreter","latex")
     if i == nplots
@@ -65,13 +70,17 @@ for i = 1:nplots
     if i == 1
         title("Frequency response","Interpreter","latex")
     end
-    %legend([h1,h2],'Interpreter','latex')
-    
-    % Plot test signals comparison 
-    TZL = TwoZeCLogger(data_dir,algorithm_fcn_name,metric_names,hyperparam_names,hyperparams);
-    TZL.set_current_fs(fs);
-    [y_ref, y_crop] = TZL.assessCrop(ir_file,h_crop,h_ref,t_lims);
-    
+
+    % Render test signal through both IRs (original and truncated)
+    h_pad = [zeros(t_lims(1)-1,1) ; h_crop];
+    nfft = max(length(h_ref),length(h_crop)) + length(test_signal) + 1;
+    H_ref = fft(h_ref,nfft);
+    H_pad = fft(h_pad,nfft);
+    X_test = fft(test_signal,nfft);
+    y_ref = ifft(H_ref.*X_test,nfft);
+    y_crop = ifft(H_pad.*X_test,nfft);
+
+    % Plot rendered test signals comparison  
     figure(2)
     subplot(nplots,1,i)
     plot(y_ref,'DisplayName','$y[n]$'), hold on, grid on
