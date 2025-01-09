@@ -10,8 +10,9 @@ algorithm_fcn_name = 'twoZeC';
 metric_names = ["MSE" "SDR"];
 hyperparam_names = ["p" "spec_tol" "SNR" "f_lims"];
 
-% 2ZeC hyperparameters (spec_tol)
+% 2ZeC hyperparameters
 p = 2;
+spec_tol = 1e-1;
 SNRs = [40 20 10];
 f_lims = [0 20e3];
 
@@ -33,7 +34,7 @@ for i = 1:nplots
     SNR = SNRs(i);
 
     % Set optimal spectral tolerance
-    spec_tol = get_optimal_spec_tol(SNR);
+    spec_tol = get_optimal_spec_tol();
 
     % Add noise (if any)
     h_ref = add_gaussian_noise(h_ref,SNR);
