@@ -47,8 +47,8 @@ for i = 1:nplots
     
     % Call IR truncation algorithm (2ZeC, SWED or MIRACLE) and return cropped response + limits in original IR
     [h_crop,t_lims,f_lims] = twoZeC(h_ref,fs,p,spec_tol,f_lims);
-    %[h_cropped,t_lims] = SWED(h,0,SNR);
-    %[h_cropped,t_lims] = MIRACLE(h,0,SNR)
+    %[h_crop,t_lims] = SWED(h_ref,0,SNR);
+    %[h_crop,t_lims] = MIRACLE(h_ref,0,SNR);
     
     % Plot the original IR (time & freq), the limits and the computed loss
     figure(1)

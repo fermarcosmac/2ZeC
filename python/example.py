@@ -1,8 +1,20 @@
+""" 
+Example of use: 2ZeC
+
+This example script reads an impulse response from the .\data directory,
+adds gaussian noise with the specified SNRs and crops it using either
+2ZeC, SWED or MIRACLE methods. To shift between truncation algorithms,
+comment/uncomment lines 55-57. Time-and-frequency domain results are
+plotted, as well as a comparison of a rendered wideband signal
+(.\data\test_signal.wav).
+
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io.wavfile import read as wav_read
 from scipy.fft import fft, ifft
-from utils import twoZeC, add_gaussian_noise, get_optimal_spec_tol, myMSE
+from utils import twoZeC, add_gaussian_noise, get_optimal_spec_tol, myMSE, SWED, MIRACLE
 
 # User-defined parameters first
 ir_file = "example_h_bp.wav"
@@ -39,8 +51,10 @@ for i, SNR in enumerate(SNRs):
     # Add noise
     h_noisy = add_gaussian_noise(h_ref, SNR)
 
-    # Call IR truncation algorithm
+    # Call IR truncation algorithm (2ZeC, SWED or MIRACLE) and return cropped response + limits in original IR
     h_crop, t_lims, f_lims = twoZeC(h_noisy, fs, p, spec_tol, f_lims)
+    #h_crop, t_lims = SWED(h_noisy,0,SNR)
+    #h_crop, t_lims = MIRACLE(h_noisy,0,SNR)
 
     # Plot the original IR (time & freq), the limits, and the computed loss
     axs1[i, 0].plot(h_noisy, label="Noisy IR")
