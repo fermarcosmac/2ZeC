@@ -397,6 +397,18 @@ def MIRACLE(h, *varargin):
 
 
 def wav_read_normalize(audio_path,wav_read_fcn):
+    """
+    Reads a .wav file through the specified function and normalizes its
+    range to [-1, 1]. The resulting signal is float64 (double)
+
+    Parameters:
+        audio_path (string): path to .wav file
+        wav_read_fcn (function pointer): function to read .wav file from disk
+
+    Returns:
+        fs (int): sample rate
+        x (numpy.ndarray, float64): audio signal samples
+    """
 
     # Read WAV file in native type
     fs, x = wav_read_fcn(audio_path)
