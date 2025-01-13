@@ -1,4 +1,11 @@
 %% Example of use: 2ZeC
+% This example script reads an impulse response from the .\data directory,
+% adds gaussian noise with the specified SNRs and crops it using either
+% 2ZeC, SWED or MIRACLE methods. To shift between truncation algorithms,
+% comment/uncomment lines 46-48. Time-and-frequency domain results are
+% plotted, as well as a comparison of a rendered wideband signal
+% (.\data\test_signal.wav).
+
 clear, close all
 addpath("utils\");
 
@@ -38,8 +45,10 @@ for i = 1:nplots
     % Add noise (if any)
     h_ref = add_gaussian_noise(h_ref,SNR);
     
-    % Call 2ZeC and return cropped response + limits in original IR
+    % Call IR truncation algorithm (2ZeC, SWED or MIRACLE) and return cropped response + limits in original IR
     [h_crop,t_lims,f_lims] = twoZeC(h_ref,fs,p,spec_tol,f_lims);
+    %[h_cropped,t_lims] = SWED(h,0,SNR);
+    %[h_cropped,t_lims] = MIRACLE(h,0,SNR)
     
     % Plot the original IR (time & freq), the limits and the computed loss
     figure(1)
