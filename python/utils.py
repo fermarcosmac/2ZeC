@@ -394,3 +394,28 @@ def MIRACLE(h, *varargin):
     t_lims = (s0, s1)
 
     return h_cropped, t_lims
+
+
+def wav_read_normalize(audio_path,wav_read_fcn):
+
+    # Read WAV file in native type
+    fs, x = wav_read_fcn(audio_path)
+
+    # Normalize based on the data type
+    if x.dtype == np.int16:
+        x = x.astype(np.float64)
+        x /= 32768.0  # Normalize to [-1, 1]
+    elif x.dtype == np.int32:
+        x = x.astype(np.float64)
+        x /= 2147483648.0  # Normalize to [-1, 1]
+    elif np.issubdtype(x.dtype, np.floating):
+        # No normalization needed for float types
+        pass
+    else:
+        raise ValueError(f"Unsupported data type: {x.dtype}")
+    
+    # Convert to double
+    
+
+    return fs, x
+

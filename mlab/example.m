@@ -13,11 +13,8 @@ addpath("utils\");
 ir_file = "example_h_bp.wav";
 test_signal_file = "test_signal.wav";
 data_dir = ".\data\";
-algorithm_fcn_name = 'twoZeC';
-metric_names = ["MSE" "SDR"];
-hyperparam_names = ["p" "spec_tol" "SNR" "f_lims"];
 
-% 2ZeC hyperparameters (spec_tol)
+% 2ZeC hyperparameters
 p = Inf;
 SNRs = [40 20 10];
 f_lims = [0 20e3];

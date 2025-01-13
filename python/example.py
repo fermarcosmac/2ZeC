@@ -1,12 +1,12 @@
 """ 
 Example of use: 2ZeC
 
-This example script reads an impulse response from the .\data directory,
+This example script reads an impulse response from the ./data directory,
 adds gaussian noise with the specified SNRs and crops it using either
 2ZeC, SWED or MIRACLE methods. To shift between truncation algorithms,
 comment/uncomment lines 55-57. Time-and-frequency domain results are
 plotted, as well as a comparison of a rendered wideband signal
-(.\data\test_signal.wav).
+(./data/test_signal.wav).
 
 """
 
@@ -14,15 +14,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io.wavfile import read as wav_read
 from scipy.fft import fft, ifft
-from utils import twoZeC, add_gaussian_noise, get_optimal_spec_tol, myMSE, SWED, MIRACLE
+from utils import twoZeC, add_gaussian_noise, get_optimal_spec_tol, myMSE, SWED, MIRACLE, wav_read_normalize
 
 # User-defined parameters first
 ir_file = "example_h_bp.wav"
 test_signal_file = "test_signal.wav"
 data_dir = "./data/"
-algorithm_fcn_name = 'twoZeC'
-metric_names = ["MSE", "SDR"]
-hyperparam_names = ["p", "spec_tol", "SNR", "f_lims"]
 
 # 2ZeC hyperparameters
 p = np.inf
@@ -31,13 +28,12 @@ f_lims = [0, 20e3]
 
 # Retrieve impulse response from IR's directory
 ir_path = data_dir + ir_file
-fs, h_ref = wav_read(ir_path)
-h_ref = h_ref.astype(np.float32)
+fs, h_ref = wav_read_normalize(ir_path,wav_read)
 
 # Retrieve test signal (MLS)
 test_signal_path = data_dir + test_signal_file
-fs2, test_signal = wav_read(test_signal_path)
-test_signal = test_signal.astype(np.float32)
+fs2, test_signal = wav_read_normalize(test_signal_path,wav_read)
+
 
 # Initialize figures
 nplots = len(SNRs)
@@ -83,7 +79,7 @@ for i, SNR in enumerate(SNRs):
         axs1[i, 1].set_title("Frequency Response")
 
     # Render test signal through both IRs (original and truncated)
-    h_pad = np.pad(h_crop, (t_lims[0] - 1, 0), mode='constant')
+    h_pad = np.pad(h_crop, (t_lims[0], 0), mode='constant')
     nfft = max(len(h_ref), len(h_crop)) + len(test_signal) + 1
     H_ref = fft(h_noisy, nfft)
     H_pad = fft(h_pad, nfft)
