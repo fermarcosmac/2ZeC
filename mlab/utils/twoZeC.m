@@ -9,7 +9,7 @@ function [h_cropped,t_lims,f_lims] = twoZeC(h,fs,p,spec_tol,varargin)
 %   varargin: can hold frequency limits as a vector of the format [f0, f1] (double)
 %
 % @returns:
-%   h_cropped: truncated impulse response (array)
+%   h_cropped: truncated impulse response (double array)
 %   t_lims: vector containing the truncation limits, in samples (integers)
 %   f_lims: vector containing the used frequency limits (passed as parameter or estimated)
 
